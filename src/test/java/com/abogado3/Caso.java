@@ -36,7 +36,7 @@ public class Caso {
 	}
 
 	public boolean puedeSerAccedidoPor(Abogado abogado) {
-		return Iterables.contains(abogadosAutorizadosParaLectura, abogado);
+		return Iterables.contains(abogadosAutorizadosParaLectura, abogado) || Iterables.contains(abogadosAutorizadosParaAccesoTotal, abogado);
 	}
 
 	public void darAccesoTotalA(Abogado porAutorizar) {
