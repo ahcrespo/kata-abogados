@@ -26,17 +26,39 @@ public class Caso {
 		return id;
 	}
 
-	public boolean isManejadoPor(Abogado autorizador) {
+	public boolean esManejadoPor(Abogado autorizador) {
 		return manejador.equals(autorizador);
 	}
 
-	public void darPermisoParaLecturaA(Abogado abogadoPorAutorizar) {
-		abogadosAutorizadosParaLectura.add(abogadoPorAutorizar);
+	public void darPermisoParaLecturaA(Abogado abogado) {
+
+		if (abogadosConAccesoDenegado.contains(abogado))
+			throw new RuntimeException("El abogado" + " tiene denegado el acceso.");
+
+		abogadosAutorizadosParaLectura.add(abogado);
+
+		// TODO: Hacer el caso de test donde si doy permiso de lectura cuando
+		// PREVIAMENTE tenia acceso total, entonces que se le saque el acceso
+		// total
+		if (abogadosAutorizadosParaAccesoTotal.contains(abogado))
+			abogadosAutorizadosParaAccesoTotal.remove(abogado);
+	}
+
+	public void denegarPermisoA(Abogado abogado) {
+		abogadosConAccesoDenegado.add(abogado);
+
+		if (abogadosAutorizadosParaLectura.contains(abogado))
+			abogadosAutorizadosParaLectura.remove(abogado);
+
+		if (abogadosAutorizadosParaAccesoTotal.contains(abogado))
+			abogadosAutorizadosParaAccesoTotal.remove(abogado);
+
 	}
 
 	public boolean puedeSerAccedidoPor(Abogado abogado) {
-		return Iterables.contains(abogadosAutorizadosParaLectura, abogado)
-				|| Iterables.contains(abogadosAutorizadosParaAccesoTotal, abogado);
+		return !abogadosConAccesoDenegado.contains(abogado)
+				&& (Iterables.contains(abogadosAutorizadosParaLectura, abogado)
+						|| Iterables.contains(abogadosAutorizadosParaAccesoTotal, abogado));
 	}
 
 	public boolean tieneAccesoTotalPara(Abogado abogado) {

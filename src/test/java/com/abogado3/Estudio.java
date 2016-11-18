@@ -20,16 +20,34 @@ public class Estudio {
 
 		try {
 			Caso caso = Iterables.find(casos, new Predicate<Caso>() {
-				public boolean apply(Caso arg0) {
-					return arg0.getId().equals(casoId);
+				public boolean apply(Caso caso) {
+					return caso.getId().equals(casoId);
 				}
 			});
 
-			if (!caso.isManejadoPor(autorizador))
+			if (!caso.esManejadoPor(autorizador))
 				throw new RuntimeException(
 						"No tiene permisos para realizar esta operacion. Contactase con el abogado que maneja el caso");
 
 			caso.darPermisoParaLecturaA(porAutorizar);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	public void denegarAcceso(Abogado manejador, Abogado abogado, final String casoId) {
+		try {
+			Caso caso = Iterables.find(casos, new Predicate<Caso>() {
+				public boolean apply(Caso caso) {
+					return caso.getId().equals(casoId);
+				}
+			});
+
+			if (!caso.esManejadoPor(manejador))
+				throw new RuntimeException(
+						"No tiene permisos para realizar esta operacion. Contactase con el abogado que maneja el caso");
+
+			caso.denegarPermisoA(abogado);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
@@ -75,7 +93,7 @@ public class Estudio {
 				}
 			});
 
-			if (!caso.isManejadoPor(autorizador))
+			if (!caso.esManejadoPor(autorizador))
 				throw new RuntimeException(
 						"No tiene permisos para realizar esta operacion. Contactase con el abogado que maneja el caso");
 

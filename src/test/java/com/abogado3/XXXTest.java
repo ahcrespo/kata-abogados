@@ -201,7 +201,40 @@ public class XXXTest {
 
 		Assert.assertEquals(casosDeAccesoTotalParaPedro.size(), 1);
 		Assert.assertEquals(casosDeAccesoTotalParaPedro.get(0).getId(), "Caso A");
+	}
 
+	/**
+	 * Dado un abogado Juan con los casos A y B
+	 * 
+	 * Y un abogado Pedro
+	 * 
+	 * Y ambos pertenecen al mismo estudio
+	 * 
+	 * Y Juan le da a Pedro permisos globales de lectura
+	 * 
+	 * Cuando Juan le deniega a Pedro el acceso sobre el caso A
+	 * 
+	 * Entonces Pedro puede acceder al caso B pero no puede acceder al caso A
+	 * 
+	 */
+
+	@Test
+	public void xxx7() {
+		Abogado juan = encontrarAJuan();
+		Abogado pedro = encontrarAPedro();
+		estudio.darPermisosGlobalesDeLectura(juan, pedro);
+
+		// When
+		estudio.denegarAcceso(juan, pedro, "Caso A");
+
+		// Then
+		List<Caso> casosAccesiblesPorPedro = estudio.encontrarCasosAccesiblesPor(pedro);
+
+		Assert.assertEquals(casosAccesiblesPorPedro.size(), 1);
+		Assert.assertEquals(casosAccesiblesPorPedro.get(0).getId(), "Caso B");
+
+		List<Caso> casosDeAccesoTotalParaPedro = estudio.encontrarCasosDeAccesoTotalPara(pedro);
+		Assert.assertEquals(casosDeAccesoTotalParaPedro.size(), 0);
 	}
 
 	private Abogado encontrarAPepe() {
