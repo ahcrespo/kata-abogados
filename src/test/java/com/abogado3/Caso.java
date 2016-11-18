@@ -12,8 +12,12 @@ public class Caso {
 	private List<Abogado> abogadosAutorizadosParaLectura = Lists.newArrayList();
 	private List<Abogado> abogadosAutorizadosParaAccesoTotal = Lists.newArrayList();
 	private List<Abogado> abogadosConAccesoDenegado = Lists.newArrayList();
-	
-	
+
+	public Caso(CasoPotencial casoPotencial, Abogado abogado) {
+		this.id = casoPotencial.getId();
+		this.manejador = abogado;
+	}
+
 	public Caso(String id) {
 		this.id = id;
 	}
@@ -22,24 +26,31 @@ public class Caso {
 		return id;
 	}
 
-	public void agregarManejador(Abogado abogado) {
-		this.manejador = abogado;
-	}
-	
 	public boolean isManejadoPor(Abogado autorizador) {
 		return manejador.equals(autorizador);
 	}
 
-	
 	public void darPermisoParaLecturaA(Abogado abogadoPorAutorizar) {
 		abogadosAutorizadosParaLectura.add(abogadoPorAutorizar);
 	}
 
 	public boolean puedeSerAccedidoPor(Abogado abogado) {
-		return Iterables.contains(abogadosAutorizadosParaLectura, abogado) || Iterables.contains(abogadosAutorizadosParaAccesoTotal, abogado);
+		return Iterables.contains(abogadosAutorizadosParaLectura, abogado)
+				|| Iterables.contains(abogadosAutorizadosParaAccesoTotal, abogado);
+	}
+
+	public boolean tieneAccesoTotalPara(Abogado abogado) {
+		return Iterables.contains(abogadosAutorizadosParaAccesoTotal, abogado);
 	}
 
 	public void darAccesoTotalA(Abogado porAutorizar) {
+		if (!abogadosAutorizadosParaLectura.contains(porAutorizar))
+			abogadosAutorizadosParaLectura.add(porAutorizar);
+
 		abogadosAutorizadosParaAccesoTotal.add(porAutorizar);
+	}
+
+	public Abogado getManejador() {
+		return manejador;
 	}
 }
