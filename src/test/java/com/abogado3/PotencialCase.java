@@ -1,10 +1,10 @@
 package com.abogado3;
 
-public class CasoPotencial {
+public class PotencialCase {
 
 	private String id;
 
-	public CasoPotencial(String id) {
+	public PotencialCase(String id) {
 		this.id = id;
 	}
 	

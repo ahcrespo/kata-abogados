@@ -1,12 +1,12 @@
 package com.abogado3;
 
-public class Abogado {
+public class Lawyer {
 
 	private String nombre;
 	private String apellido;
 	private String matricula;
 
-	public Abogado(String nombre, String apellido, String matricula) {
+	public Lawyer(String nombre, String apellido, String matricula) {
 		this.nombre = nombre;
 		this.apellido = apellido;
 		this.matricula = matricula;
@@ -20,7 +20,7 @@ public class Abogado {
 		return apellido;
 	}
 
-	public String getMatricula() {
+	public String getLicense() {
 		return matricula;
 	}
 

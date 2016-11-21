@@ -8,14 +8,65 @@ import org.junit.Test;
 
 public class XXXTest {
 
-	private Estudio estudio;
+	private LawFirmSystem lawFirmSystem;
 
 	@Before
 	public void setup() {
-		estudio = crearEstudio();
+		lawFirmSystem = crearEstudio();
 	}
 
-	/*
+	/**
+	 * Dado un abogado Juan que pertenece al estudio
+	 * 
+	 * Y tiene asignados los casos A y B
+	 * 
+	 * Cuando se quiere identificar los casos a los que puede acceder Juan
+	 * 
+	 * Entonces se verifica que Juan solo puede acceder y escribir a los casos A
+	 * y B
+	 * 
+	 */
+	@Test
+	public void yyy() {
+
+		// Given
+		Lawyer juan = encontrarAJuan();
+
+		// When
+		List<Case> casosAccesiblesPorPedro = lawFirmSystem.findCasesFor(juan);
+
+		// Then
+		Assert.assertEquals(2, casosAccesiblesPorPedro.size());
+		Assert.assertEquals("Caso A", casosAccesiblesPorPedro.get(0).getId());
+		Assert.assertEquals("Caso B", casosAccesiblesPorPedro.get(1).getId());
+	}
+
+	/**
+	 * Dado un abogado Juan que pertenece al estudio
+	 * 
+	 * Y tiene asignados los casos A y B
+	 * 
+	 * Cuando se quiere identificar los casos a los que puede escribir Juan
+	 * 
+	 * Entonces se verifica que Juan solo puede escribir en los casos A y B
+	 * 
+	 */
+	@Test
+	public void yyy2() {
+
+		// Given
+		Lawyer juan = encontrarAJuan();
+
+		// Whenx
+		List<Case> casosDeAccesoTotalParaJuan = lawFirmSystem.findCasesWithFullAccessFor(juan);
+
+		// Then
+		Assert.assertEquals(2, casosDeAccesoTotalParaJuan.size());
+		Assert.assertEquals("Caso A", casosDeAccesoTotalParaJuan.get(0).getId());
+		Assert.assertEquals("Caso B", casosDeAccesoTotalParaJuan.get(1).getId());
+	}
+
+	/**
 	 * Dado un abogado Juan con los casos A y B
 	 * 
 	 * Y un abogado Pedro
@@ -30,18 +81,18 @@ public class XXXTest {
 	@Test
 	public void xxx() {
 
-		Abogado juan = encontrarAJuan();
-		Abogado pedro = encontrarAPedro();
+		Lawyer juan = encontrarAJuan();
+		Lawyer pedro = encontrarAPedro();
 
 		// When
-		estudio.darPermisoDeLectura(juan, pedro, "Caso A");
+		lawFirmSystem.grantReadAccess(juan, pedro, "Caso A");
 
-		List<Caso> casosAccesiblesPorPedro = estudio.encontrarCasosAccesiblesPor(pedro);
+		List<Case> casosAccesiblesPorPedro = lawFirmSystem.findCasesFor(pedro);
 		Assert.assertEquals(1, casosAccesiblesPorPedro.size());
 		Assert.assertEquals("Caso A", casosAccesiblesPorPedro.get(0).getId());
 	}
 
-	/*
+	/**
 	 * Dado un abogado Juan con los casos A y B
 	 * 
 	 * Y un abogado Pedro
@@ -58,14 +109,14 @@ public class XXXTest {
 	@Test
 	public void xxx2() {
 
-		Abogado juan = encontrarAJuan();
-		Abogado pedro = encontrarAPedro();
+		Lawyer juan = encontrarAJuan();
+		Lawyer pedro = encontrarAPedro();
 
 		// When
-		estudio.darAccesoTotal(juan, pedro, "Caso A");
+		lawFirmSystem.grantFullAccess(juan, pedro, "Caso A");
 
 		// Then
-		List<Caso> casosAccesiblesPorPedro = estudio.encontrarCasosAccesiblesPor(pedro);
+		List<Case> casosAccesiblesPorPedro = lawFirmSystem.findCasesFor(pedro);
 		Assert.assertEquals(1, casosAccesiblesPorPedro.size());
 		Assert.assertEquals("Caso A", casosAccesiblesPorPedro.get(0).getId());
 	}
@@ -86,13 +137,13 @@ public class XXXTest {
 	@Test
 	public void xxx3() {
 
-		Abogado pedro = encontrarAPedro();
-		Abogado pepe = contratarAPepe();
+		Lawyer pedro = encontrarAPedro();
+		Lawyer pepe = contratarAPepe();
 
 		try {
 
 			// When
-			estudio.darPermisoDeLectura(pedro, pepe, "Caso A");
+			lawFirmSystem.grantReadAccess(pedro, pepe, "Caso A");
 			Assert.fail();
 		} catch (Exception e) {
 
@@ -120,12 +171,12 @@ public class XXXTest {
 	@Test
 	public void xxx4() {
 
-		Abogado pedro = encontrarAPedro();
-		Abogado pepe = contratarAPepe();
+		Lawyer pedro = encontrarAPedro();
+		Lawyer pepe = contratarAPepe();
 
 		try {
 			// When
-			estudio.darAccesoTotal(pedro, pepe, "Caso A");
+			lawFirmSystem.grantFullAccess(pedro, pepe, "Caso A");
 			Assert.fail();
 		} catch (Exception e) {
 
@@ -150,14 +201,14 @@ public class XXXTest {
 	@Test
 	public void xxx5() {
 
-		Abogado juan = encontrarAJuan();
-		Abogado pedro = encontrarAPedro();
+		Lawyer juan = encontrarAJuan();
+		Lawyer pedro = encontrarAPedro();
 
 		// When
-		estudio.darPermisosGlobalesDeLectura(juan, pedro);
+		lawFirmSystem.grantGlobalReadOnlyAccess(juan, pedro);
 
 		// Then
-		List<Caso> casosAccesiblesPorPedro = estudio.encontrarCasosAccesiblesPor(pedro);
+		List<Case> casosAccesiblesPorPedro = lawFirmSystem.findCasesFor(pedro);
 
 		Assert.assertEquals(casosAccesiblesPorPedro.size(), 2);
 		Assert.assertEquals(casosAccesiblesPorPedro.get(0).getId(), "Caso A");
@@ -183,24 +234,29 @@ public class XXXTest {
 	@Test
 	public void xxx6() {
 
-		Abogado juan = encontrarAJuan();
-		Abogado pedro = encontrarAPedro();
-		estudio.darPermisosGlobalesDeLectura(juan, pedro);
+		Lawyer juan = encontrarAJuan();
+		Lawyer pedro = encontrarAPedro();
+		lawFirmSystem.grantGlobalReadOnlyAccess(juan, pedro);
 
 		// When
-		estudio.darAccesoTotal(juan, pedro, "Caso A");
+		lawFirmSystem.grantFullAccess(juan, pedro, "Caso A");
 
 		// Then
-		List<Caso> casosAccesiblesPorPedro = estudio.encontrarCasosAccesiblesPor(pedro);
+		List<Case> casesAccessedByPedro = lawFirmSystem.findCasesFor(pedro);
 
-		Assert.assertEquals(casosAccesiblesPorPedro.size(), 2);
-		Assert.assertEquals(casosAccesiblesPorPedro.get(0).getId(), "Caso A");
-		Assert.assertEquals(casosAccesiblesPorPedro.get(1).getId(), "Caso B");
+		Assert.assertEquals(casesAccessedByPedro.size(), 2);
+		Case caseA = casesAccessedByPedro.get(0);
+		Case caseB = casesAccessedByPedro.get(1);
 
-		List<Caso> casosDeAccesoTotalParaPedro = estudio.encontrarCasosDeAccesoTotalPara(pedro);
+		Assert.assertEquals(caseA.getId(), "Caso A");
+		Assert.assertEquals(true, caseA.hasFullAccessFor(pedro));
+		Assert.assertEquals(true, caseA.hasReadOnlyAccessFor(pedro));
+		Assert.assertEquals(false, caseA.hasAccessDeniedFor(pedro));
 
-		Assert.assertEquals(casosDeAccesoTotalParaPedro.size(), 1);
-		Assert.assertEquals(casosDeAccesoTotalParaPedro.get(0).getId(), "Caso A");
+		Assert.assertEquals(caseB.getId(), "Caso B");
+		Assert.assertEquals(true, caseB.hasReadOnlyAccessFor(pedro));
+		Assert.assertEquals(false, caseB.hasFullAccessFor(pedro));
+		Assert.assertEquals(false, caseB.hasAccessDeniedFor(pedro));
 	}
 
 	/**
@@ -220,51 +276,187 @@ public class XXXTest {
 
 	@Test
 	public void xxx7() {
-		Abogado juan = encontrarAJuan();
-		Abogado pedro = encontrarAPedro();
-		estudio.darPermisosGlobalesDeLectura(juan, pedro);
+
+		// Given
+		Lawyer juan = encontrarAJuan();
+		Lawyer pedro = encontrarAPedro();
+		lawFirmSystem.grantGlobalReadOnlyAccess(juan, pedro);
 
 		// When
-		estudio.denegarAcceso(juan, pedro, "Caso A");
+		lawFirmSystem.denyAccess(juan, pedro, "Caso A");
 
 		// Then
-		List<Caso> casosAccesiblesPorPedro = estudio.encontrarCasosAccesiblesPor(pedro);
+		List<Case> casesAccessedByPedro = lawFirmSystem.findCasesFor(pedro);
 
-		Assert.assertEquals(casosAccesiblesPorPedro.size(), 1);
-		Assert.assertEquals(casosAccesiblesPorPedro.get(0).getId(), "Caso B");
+		Assert.assertEquals(casesAccessedByPedro.size(), 1);
+		Case caseB = casesAccessedByPedro.get(0);
 
-		List<Caso> casosDeAccesoTotalParaPedro = estudio.encontrarCasosDeAccesoTotalPara(pedro);
-		Assert.assertEquals(casosDeAccesoTotalParaPedro.size(), 0);
+		Assert.assertEquals(caseB.getId(), "Caso B");
+		Assert.assertEquals(true, caseB.hasReadOnlyAccessFor(pedro));
+		Assert.assertEquals(false, caseB.hasFullAccessFor(pedro));
+		Assert.assertEquals(false, caseB.hasAccessDeniedFor(pedro));
+
+		List<Case> casesAccessedByJuan = lawFirmSystem.findCasesFor(juan);
+		Assert.assertEquals(casesAccessedByJuan.size(), 2);
+		Case caseA = casesAccessedByJuan.get(0);
+
+		Assert.assertEquals(caseA.getId(), "Caso A");
+		Assert.assertEquals(true, caseA.hasAccessDeniedFor(pedro));
+		Assert.assertEquals(false, caseA.hasFullAccessFor(pedro));
+		Assert.assertEquals(false, caseA.hasFullAccessFor(pedro));
+
+		List<Lawyer> lawyersForCaseA = lawFirmSystem.findLawyersFor("Caso A");
+		Assert.assertEquals(1, lawyersForCaseA.size());
+		Assert.assertEquals(juan, lawyersForCaseA.get(0));
+
+		List<Lawyer> lawyersForCaseB = lawFirmSystem.findLawyersFor("Caso B");
+		Assert.assertEquals(2, lawyersForCaseB.size());
+		Assert.assertEquals(juan, lawyersForCaseB.get(0));
+		Assert.assertEquals(pedro, lawyersForCaseB.get(1));
 	}
 
-	private Abogado encontrarAPepe() {
-		return estudio.encontrarAbogado("MAT-30000");
+	/**
+	 * Dado un abogado Juan con los casos A y B
+	 * 
+	 * Y un abogado Pedro
+	 * 
+	 * Y ambos pertenecen al mismo estudio
+	 * 
+	 * Y Juan le da a Pedro permisos globales de lectura y escritura
+	 * 
+	 * Cuando Juan le deniega a Pedro el acceso sobre el caso A
+	 * 
+	 * Entonces Pedro tiene acceso total al caso B pero no puede acceder al caso
+	 * A
+	 * 
+	 */
+
+	@Test
+	public void xxx8() {
+
+		// Given
+		Lawyer juan = encontrarAJuan();
+		Lawyer pedro = encontrarAPedro();
+		lawFirmSystem.grantGlobalFullAccess(juan, pedro);
+
+		// When
+		lawFirmSystem.denyAccess(juan, pedro, "Caso A");
+
+		// Then
+		List<Case> casesAccessedByPedro = lawFirmSystem.findCasesFor(pedro);
+
+		Assert.assertEquals(casesAccessedByPedro.size(), 1);
+		Case caseB = casesAccessedByPedro.get(0);
+
+		Assert.assertEquals(caseB.getId(), "Caso B");
+		Assert.assertEquals(true, caseB.hasReadOnlyAccessFor(pedro));
+		Assert.assertEquals(true, caseB.hasFullAccessFor(pedro));
+		Assert.assertEquals(false, caseB.hasAccessDeniedFor(pedro));
+
+		List<Case> casesAccessedByJuan = lawFirmSystem.findCasesFor(juan);
+		Assert.assertEquals(casesAccessedByJuan.size(), 2);
+		Case caseA = casesAccessedByJuan.get(0);
+
+		Assert.assertEquals(caseA.getId(), "Caso A");
+		Assert.assertEquals(true, caseA.hasAccessDeniedFor(pedro));
+		Assert.assertEquals(false, caseA.hasFullAccessFor(pedro));
+		Assert.assertEquals(false, caseA.hasFullAccessFor(pedro));
+
+		List<Lawyer> lawyersForCaseA = lawFirmSystem.findLawyersFor("Caso A");
+		Assert.assertEquals(1, lawyersForCaseA.size());
+		Assert.assertEquals(juan, lawyersForCaseA.get(0));
+
+		List<Lawyer> lawyersForCaseB = lawFirmSystem.findLawyersFor("Caso B");
+		Assert.assertEquals(2, lawyersForCaseB.size());
+		Assert.assertEquals(juan, lawyersForCaseB.get(0));
+		Assert.assertEquals(pedro, lawyersForCaseB.get(1));
+
 	}
 
-	private Abogado encontrarAPedro() {
-		return estudio.encontrarAbogado("MAT-20000");
+	/**
+	 * Dado un abogado Juan con los casos A y B
+	 * 
+	 * Y un abogado Pedro
+	 * 
+	 * Y ambos pertenecen al mismo estudio
+	 * 
+	 * Y Juan le deniega a Pedro el acceso a todos sus casoos
+	 * 
+	 * Cuando Juan le da a Pedro acceso total sobre el caso B
+	 * 
+	 * Entonces Pedro tiene acceso total al caso B pero no puede acceder al caso
+	 * A
+	 * 
+	 */
+	@Test
+	public void xxx9() {
+
+		// Given
+		Lawyer juan = encontrarAJuan();
+		Lawyer pedro = encontrarAPedro();
+		lawFirmSystem.grantGlobalDenyAccess(juan, pedro);
+
+		// When
+		lawFirmSystem.grantFullAccess(juan, pedro, "Caso B");
+
+		// Then
+		List<Case> casesAccessedByPedro = lawFirmSystem.findCasesFor(pedro);
+
+		Assert.assertEquals(casesAccessedByPedro.size(), 1);
+		Case caseB = casesAccessedByPedro.get(0);
+
+		Assert.assertEquals(caseB.getId(), "Caso B");
+		Assert.assertEquals(true, caseB.hasReadOnlyAccessFor(pedro));
+		Assert.assertEquals(true, caseB.hasFullAccessFor(pedro));
+		Assert.assertEquals(false, caseB.hasAccessDeniedFor(pedro));
+
+		List<Case> casesAccessedByJuan = lawFirmSystem.findCasesFor(juan);
+		Assert.assertEquals(casesAccessedByJuan.size(), 2);
+		Case caseA = casesAccessedByJuan.get(0);
+
+		Assert.assertEquals(caseA.getId(), "Caso A");
+		Assert.assertEquals(true, caseA.hasAccessDeniedFor(pedro));
+		Assert.assertEquals(false, caseA.hasFullAccessFor(pedro));
+		Assert.assertEquals(false, caseA.hasFullAccessFor(pedro));
+
+		List<Lawyer> lawyersForCaseA = lawFirmSystem.findLawyersFor("Caso A");
+		Assert.assertEquals(1, lawyersForCaseA.size());
+		Assert.assertEquals(juan, lawyersForCaseA.get(0));
+
+		List<Lawyer> lawyersForCaseB = lawFirmSystem.findLawyersFor("Caso B");
+		Assert.assertEquals(2, lawyersForCaseB.size());
+		Assert.assertEquals(juan, lawyersForCaseB.get(0));
+		Assert.assertEquals(pedro, lawyersForCaseB.get(1));
 	}
 
-	private Abogado contratarAPepe() {
-		estudio.contratarA("Pepe", "Muleiro", "MAT-30000");
+	private Lawyer encontrarAPepe() {
+		return lawFirmSystem.findLawyer("MAT-30000");
+	}
+
+	private Lawyer encontrarAPedro() {
+		return lawFirmSystem.findLawyer("MAT-20000");
+	}
+
+	private Lawyer contratarAPepe() {
+		lawFirmSystem.hireA("Pepe", "Muleiro", "MAT-30000");
 		return encontrarAPepe();
 	}
 
-	private Abogado encontrarAJuan() {
-		return estudio.encontrarAbogado("MAT-10000");
+	private Lawyer encontrarAJuan() {
+		return lawFirmSystem.findLawyer("MAT-10000");
 	}
 
-	private Estudio crearEstudio() {
+	private LawFirmSystem crearEstudio() {
 
-		Estudio estudio = new Estudio();
+		LawFirmSystem estudio = new LawFirmSystem();
 
-		CasoPotencial casoPotencialA = new CasoPotencial("Caso A");
-		CasoPotencial casoPotencialB = new CasoPotencial("Caso B");
+		PotencialCase casoPotencialA = new PotencialCase("Caso A");
+		PotencialCase casoPotencialB = new PotencialCase("Caso B");
 
-		estudio.contratarA("Juan", "Gutierrez", "MAT-10000");
-		estudio.contratarA("Pedro", "Sanchez", "MAT-20000");
-		estudio.aceptarCaso(casoPotencialA);
-		estudio.aceptarCaso(casoPotencialB);
+		estudio.hireA("Juan", "Gutierrez", "MAT-10000");
+		estudio.hireA("Pedro", "Sanchez", "MAT-20000");
+		estudio.acceptCase(casoPotencialA);
+		estudio.acceptCase(casoPotencialB);
 
 		return estudio;
 	}
